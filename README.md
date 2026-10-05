@@ -32,8 +32,16 @@ Azure, on a small-business budget.
 - Next: remaining department groups, MFA, and role-based access control
   
 ### Phase 3: Network & Compute
+
+**Status:** Not started
+
 ### Phase 4: Storage & Backup
+
+**Status:** Not started
+
 ### Phase 5: Security Monitoring (Microsoft Sentinel)
+
+**Status:** Not started
 
 ## Lessons Learned
 
@@ -53,7 +61,8 @@ the student subscription into it. The university's subscription policy
 blocked the transfer.
 
 **Resolution: split architecture.** Identity lives in the dedicated
-tenant; infrastructure runs on the student subscription. Security monitoring
-was adapted to use VM Windows security events instead of Entra sign-in logs.
+tenant; infrastructure runs on the student subscription. Security monitoring will use VM Windows security events instead of Entra sign-in logs
 
 ## Estimated Monthly Cost
+
+Current cost: $0. Identity (Entra ID Free tier) and resource groups have no charge. Full estimate will be added after Phase 3, when compute and storage are deployed.

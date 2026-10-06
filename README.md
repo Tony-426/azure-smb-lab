@@ -24,12 +24,20 @@ Azure, on a small-business budget.
   subscription (see Lessons Learned)
   
 ### Phase 2: Identity & Access
-**Status:** In progress
+**Status:** Complete
 
-- Created 3 employee accounts with job title, department, and company
-  attributes (Front Office Manager, Dental Hygienist, Office Administrator)
-- Created security group `grp-front-office` with assigned membership
-- Next: remaining department groups, MFA, and role-based access control
+- Created employee accounts with job title, department, and company attributes
+- Created department security groups: `grp-front-office`, `grp-clinical`, `grp-admin`
+- Enabled MFA for all users via Entra ID security defaults; tested by enrolling
+  a user in Microsoft Authenticator
+- Restricted non-admin access to the Microsoft Entra admin center
+- Applied least-privilege RBAC on `rg-trinity-prod`:
+
+| Group | Role | Reason |
+|---|---|---|
+| grp-admin | Contributor | Office admin manages IT resources |
+| grp-front-office | Reader | Can view resources, can't change them |
+| grp-clinical | No access | No business need for cloud resource access |
   
 ### Phase 3: Network & Compute
 

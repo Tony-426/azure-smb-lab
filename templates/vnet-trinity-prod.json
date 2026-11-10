@@ -1,0 +1,119 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_vnet_trinity_prod_name": {
+            "defaultValue": "vnet-trinity-prod",
+            "type": "String"
+        },
+        "networkSecurityGroups_nsg_trinity_servers_externalid": {
+            "defaultValue": "/subscriptions/<subscription-id>/resourceGroups/rg-trinity-infra/providers/Microsoft.Network/networkSecurityGroups/nsg-trinity-servers",
+            "type": "String"
+        },
+        "networkSecurityGroups_nsg_trinity_workstations_externalid": {
+            "defaultValue": "/subscriptions/<subscription-id>/resourceGroups/rg-trinity-infra/providers/Microsoft.Network/networkSecurityGroups/nsg-trinity-workstations",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2025-09-01",
+            "name": "[parameters('virtualNetworks_vnet_trinity_prod_name')]",
+            "location": "northcentralus",
+            "tags": {
+                "project": "trinity-dental",
+                "env": "lab"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.10.0.0/16"
+                    ]
+                },
+                "encryption": {
+                    "enabled": false,
+                    "enforcement": "AllowUnencrypted"
+                },
+                "privateEndpointVNetPolicies": "Disabled",
+                "subnets": [
+                    {
+                        "name": "snet-servers",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_trinity_prod_name'), 'snet-servers')]",
+                        "properties": {
+                            "addressPrefixes": [
+                                "10.10.1.0/24"
+                            ],
+                            "networkSecurityGroup": {
+                                "id": "[parameters('networkSecurityGroups_nsg_trinity_servers_externalid')]"
+                            },
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "defaultOutboundAccess": false
+                        }
+                    },
+                    {
+                        "name": "snet-workstations",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_trinity_prod_name'), 'snet-workstations')]",
+                        "properties": {
+                            "addressPrefixes": [
+                                "10.10.2.0/24"
+                            ],
+                            "networkSecurityGroup": {
+                                "id": "[parameters('networkSecurityGroups_nsg_trinity_workstations_externalid')]"
+                            },
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "defaultOutboundAccess": false
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2025-09-01",
+            "name": "[concat(parameters('virtualNetworks_vnet_trinity_prod_name'), '/snet-servers')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_trinity_prod_name'))]"
+            ],
+            "properties": {
+                "addressPrefixes": [
+                    "10.10.1.0/24"
+                ],
+                "networkSecurityGroup": {
+                    "id": "[parameters('networkSecurityGroups_nsg_trinity_servers_externalid')]"
+                },
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled",
+                "defaultOutboundAccess": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2025-09-01",
+            "name": "[concat(parameters('virtualNetworks_vnet_trinity_prod_name'), '/snet-workstations')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_trinity_prod_name'))]"
+            ],
+            "properties": {
+                "addressPrefixes": [
+                    "10.10.2.0/24"
+                ],
+                "networkSecurityGroup": {
+                    "id": "[parameters('networkSecurityGroups_nsg_trinity_workstations_externalid')]"
+                },
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled",
+                "defaultOutboundAccess": false
+            }
+        }
+    ]
+}
